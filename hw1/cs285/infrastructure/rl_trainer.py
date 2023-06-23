@@ -39,6 +39,7 @@ class RL_Trainer(object):
         ## ENV
         #############
 
+
         # Make the gym environment
         if self.params['video_log_freq'] == -1:
             self.params['env_kwargs']['render_mode'] = None
