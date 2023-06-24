@@ -1,0 +1,24 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/cs285/scripts/run_hw1.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--expert_policy_file", "cs285/policies/experts/Ant.pkl", 
+                "--env_name", "Ant-v4",
+                "--exp_name", "bc_ant",
+                "--n_iter", "1",
+                "--expert_data", "cs285/expert_data/expert_data_Ant-v4.pkl",
+                "--video_log_freq", "-1"
+            ],
+            "justMyCode": true
+        }
+    ]
+}
