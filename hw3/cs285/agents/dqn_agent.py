@@ -94,7 +94,7 @@ class DQNAgent(object):
 
             # TODO fill in the call to the update function using the appropriate tensors
             log = self.critic.update(
-                ob_no, ac_no, next_ob_no, re_n, terminal_n
+                ob_no, ac_na, next_ob_no, re_n, terminal_n
             )
 
             # TODO update the target network periodically 

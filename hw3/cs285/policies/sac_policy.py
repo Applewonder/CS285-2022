@@ -36,12 +36,18 @@ class MLPPolicySAC(MLPPolicy):
     @property
     def alpha(self):
         # TODO: Formulate entropy term
-        return entropy
+        return self.log_alpha.exp()
 
     def get_action(self, obs: np.ndarray, sample=True) -> np.ndarray:
         # TODO: return sample from distribution if sampling
         # if not sampling return the mean of the distribution 
-        return action
+        obs = ptu.from_numpy(obs)
+        dist = self.forward(obs)
+        if sample:
+            action = dist.sample()
+        else:
+            action = dist.mean()
+        return ptu.to_numpy(action)
 
     # This function defines the forward pass of the network.
     # You can return anything you want, but you should be able to differentiate
@@ -54,10 +60,34 @@ class MLPPolicySAC(MLPPolicy):
         # HINT: 
         # You will need to clip log values
         # You will need SquashedNormal from sac_utils file 
+        action_distribution = super().forward(observation)
+        mean = action_distribution.mean()
+        std = action_distribution.std()
+        log_std = torch.log(std)
+        log_std = torch.clamp(log_std, self.log_std_bounds[0], self.log_std_bounds[1])
+        action_distribution = SquashedNormal(mean, std.exp(log_std))
         return action_distribution
+
 
     def update(self, obs, critic):
         # TODO Update actor network and entropy regularizer
         # return losses and alpha value
+        dist = self.forward(ptu.from_numpy(obs))
+        action = self.get_action(obs)
+        log_prob = dist.log_prob(action)
 
-        return actor_loss, alpha_loss, self.alpha
+        q1, q2 = critic(obs, action)
+        min_q = torch.min(q1, q2)
+
+        actor_loss = (self.alpha.detach() * log_prob - min_q).mean()
+
+        self.optimizer.zero_grad()
+        actor_loss.backward()
+        self.optimizer.step()
+
+        alpha_loss = -(self.log_alpha * (log_prob.detach() + self.target_entropy)).mean()
+
+        self.log_alpha_optimizer.zero_grad()
+        alpha_loss.backward()
+        self.log_alpha_optimizer.step()
+        return actor_loss, alpha_loss, self.alpha()
