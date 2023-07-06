@@ -47,7 +47,7 @@ def main():
     )
 
     parser.add_argument('--ep_len', type=int, default=200)
-    parser.add_argument('--exp_name', type=str, default='todo')
+    parser.add_argument('--exp_name', type=str, default='q1--env_name')
 
     parser.add_argument('--eval_batch_size', type=int, default=1000)
 

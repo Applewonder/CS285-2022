@@ -10,7 +10,9 @@ class ArgMaxPolicy(object):
         if len(obs.shape) > 3:
             observation = obs
         else:
-            observation = obs[None]
+            obs_shape = obs.shape
+            obs_shape = (-1, *obs_shape)
+            obs = obs.reshape(obs_shape)
         
         ## TODO return the action that maxinmizes the Q-value 
         # at the current observation as the output

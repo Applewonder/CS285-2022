@@ -52,7 +52,7 @@ class SACAgent(BaseAgent):
         next_ac_na = self.actor.get_action(ob_no)
         q1, q2 = self.critic.forward(next_ob_no, next_ac_na)
         
-        target_q = re_n + selg.gamma * int(not terminal_n) * (torch.min(q1, q2) - self.actor.forward(next_ob_no).log_prob(next_ac_na))
+        target_q = re_n + selg.gamma * (1 - terminal_n.float()) * (torch.min(q1, q2) - self.actor.forward(next_ob_no).log_prob(next_ac_na))
         # 2. Get current Q estimates and calculate critic loss
         cur_q1, cur_q2 = self.critic.forward(ob_no, ac_na)
         q_estimate = min(cur_q1, cur_q2)

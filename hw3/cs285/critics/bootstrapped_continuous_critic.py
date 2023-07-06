@@ -88,7 +88,7 @@ class BootstrappedContinuousCritic(nn.Module, BaseCritic):
         n_steps = self.num_grad_steps_per_target_update * self.num_target_updates
         for i in range(n_steps):
             if i % self.num_grad_steps_per_target_update == 0:
-                target_value = rs_n + self.gamma * self.forward_np(next_ob_no).squeeze(1) * int(not terminal_n)
+                target_value = rs_n + self.gamma * self.forward_np(next_ob_no).squeeze(1) * (1 - terminal_n.float())
             cur_obs = self.forward_np(ob_no).squeeze(1)
             loss = self.loss(cur_obs, target_value)
             
